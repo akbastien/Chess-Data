@@ -1,7 +1,12 @@
+"""
+Created on Sun Oct 25 4:23 2026
+
+@author: Finch Gerwe
+"""
 import math
 from collections import deque
 
-#Function from Utkarsh Trivedi
+#Function written by Utkarsh Trivedi https://www.geeksforgeeks.org/dsa/minimum-steps-reach-target-knight/
 def minStepToReachTarget(knightPos, targetPos, n):
 
     # Convert 1-based indexing to 0-based indexing
@@ -48,7 +53,7 @@ def minStepToReachTarget(knightPos, targetPos, n):
     return -1
 
 def VtoD(piecePosition):
-#Code for Knight distance edited from Utkarsh Trivedi https://www.geeksforgeeks.org/dsa/minimum-steps-reach-target-knight/
+#Code for Knight distance edited from Utkarsh Trivedi
   piecePosition2 = []
   pieceRow = []
   i = 0
