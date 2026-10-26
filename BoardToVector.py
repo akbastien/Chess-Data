@@ -31,7 +31,7 @@ def make_vector(board): #type(board) == chess.Board()
             if piece in row:
                 j = row.index(piece)
                 grid[i][j] = "x"          # mark as used (lists are mutable)
-                pos = [7 - i, j]          # [rank, file], 0-indexed
+                pos = [j, 7-i]          # [rank, file], 0-indexed
                 break
         boardVector.append(pos)
 
