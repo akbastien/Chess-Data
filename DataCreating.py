@@ -98,10 +98,10 @@ def DataToDataset(directory): #make sure to put an r before listing the director
                     board = PGNtoFEN(game, ply)
                     vector = toVector(board)
                     
-                    results = dict([("Game No", gameNumber), ("Position No", ply), ("Total Positions", totalPlies) ("Board Vector", vector), ("Winner", winner)])
+                    summary = dict([("Game No", gameNumber), ("Position No", ply), ("Total Positions", totalPlies) ("Board Vector", vector), ("Winner", winner)])
                     #records Game number (so we can keep track of which board is from which game),
                     # position, total positions, the board position vector, and the winner
-                    data.append(results)
+                    data.append(summary)
                     
                     
     
