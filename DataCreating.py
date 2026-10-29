@@ -35,32 +35,12 @@ def toVector(board):
             if piece in row:
                 j = row.index(piece)
                 grid[i][j] = "x"          # mark as used (lists are mutable)
-                pos = [j, 7-i]          # [rank, file], 0-indexed
+                pos = [j, 7-i]          # [x, y], 0-indexed
                 break
         boardVector.append(pos)
 
     return boardVector
 
-
-#Turns PGN game into FEN
-def PGNtoFEN(game, n):
-    # Go through each move in the game until
-    # we reach the required move number
-    board = chess.Board()
-    
-    for number, move in enumerate(game.mainline_moves()):
-    
-        # It copies the move played by each 
-        # player on the virtual board
-        board.push(move)
-    
-        # Remember that number starts from 0
-        if number == n:  
-            break
-
-        fen = board.fen()
-    
-    return fen
 
 def outcome(game):
     result = game.headers["Result"]
@@ -79,26 +59,26 @@ def DataToDataset(directory): #make sure to put an r before listing the director
     
     gameNumber = 0
     data = []
-    gameNumber = 0
+    
     for file in os.scandir(directory):
         if file.is_file():
             with open(file.path, "r") as f:
                 
                 gameNumber+= 1
                 
-                pgn = open(f)  # opening the file in python
-                game = chess.pgn.read_game(pgn)  # reading the game present in file
+                
+                game = chess.pgn.read_game(f)  # reading the game present in file
                 ply = 0  #total half moves (up to current point)
                 totalPlies = sum(1 for _ in game.mainline_moves()) #total half moves in game
                 winner = outcome(game)
                 
-                
+                board = game.board()
                 for move in game.mainline_moves():
+                    board.push(move)
                     ply += 1
-                    board = PGNtoFEN(game, ply)
                     vector = toVector(board)
                     
-                    summary = dict([("Game No", gameNumber), ("Position No", ply), ("Total Positions", totalPlies) ("Board Vector", vector), ("Winner", winner)])
+                    summary = dict([("Game No", gameNumber), ("Position No", ply), ("Total Positions", totalPlies), ("Board Vector", vector), ("Winner", winner)])
                     #records Game number (so we can keep track of which board is from which game),
                     # position, total positions, the board position vector, and the winner
                     data.append(summary)
@@ -116,5 +96,3 @@ def DataToDataset(directory): #make sure to put an r before listing the director
 chessData = DataToDataset("Placeholder Directory Here")
 
 chessData.to_csv('/path/to/your/directory/your_file_name.csv', index=False)
-                    
-                    
