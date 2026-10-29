@@ -6,6 +6,7 @@ Created on Wednesday 28 @7:26, 2026
 from BoardtoDistance import board, make_vector, VtoD
 
 def verify_pieces_entries(board_vector):
+  
 pieces_names = ["WKing", "WQ", "WR1", "WR2", "WB1", "WB2", "WKn1", "WKn2", "WP1", "WP2", "WP3", "WP4", "WP5", "WP6", "WP7", "WP8",
                 "BKing", "BQ", "BR1", "BR2", "BB1", "BB2", "BKn1", "BKn2", "BP1", "BP2", "BP3", "BP4", "WP5", "WP6", "WP7", "WP8"]
 
