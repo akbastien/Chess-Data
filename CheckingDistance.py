@@ -7,8 +7,8 @@ from BoardtoDistance import board, make_vector, VtoD
 
 def verify_pieces_entries(board_vector):
   
-piece_names = ["WKing", "WQ", "WR1", "WR2", "WB1", "WB2", "WKn1", "WKn2", "WP1", "WP2", "WP3", "WP4", "WP5", "WP6", "WP7", "WP8",
-                "BKing", "BQ", "BR1", "BR2", "BB1", "BB2", "BKn1", "BKn2", "BP1", "BP2", "BP3", "BP4", "WP5", "WP6", "WP7", "WP8"]
+piece_names = ["K", "Q", "R1", "R2", "B1", "B2", "Kn1", "Kn2", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8",
+                "k", "q", "r1", "r2", "b1", "b2", "kn1", "kn2", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"]
 
 print("Verifying Piece Entries")
 for i, pos in enumerate(board_vector):
