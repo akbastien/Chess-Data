@@ -17,7 +17,7 @@ for i, pos in enumerate(board_vector):
   else:
     print(f"Index {i:2} | {piece_names[i]:15} | {pos}")
 
-"""This here replace any non 1's with 0's"""
+#This here replace any non 1's with 0's
 def binarize_matrix(matrix):
   binared = []
   for row in matrix:
