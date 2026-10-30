@@ -45,7 +45,7 @@ def minStepToReachTarget(knightPos, targetPos, n):
   
   q = deque()
   visited = [[False] * n for _ in range(n)]
-  q.append((x,y,0)
+  q.append((x,y,0))
   visited[x][y] = True
 
 while q:
