@@ -62,26 +62,31 @@ def DataToDataset(directory): #make sure to put an r before listing the director
     
     for file in os.scandir(directory):
         if file.is_file():
-            with open(file.path, "r") as f:
+            with open(file.path, "r", encoding="utf-8", errors="replace") as f:
                 
-                gameNumber+= 1
+                while True:
+                    game = chess.pgn.read_game(f)
+                    if game is None:          # end of file
+                        break
+                    gameNumber+= 1
                 
                 
-                game = chess.pgn.read_game(f)  # reading the game present in file
-                ply = 0  #total half moves (up to current point)
-                totalPlies = sum(1 for _ in game.mainline_moves()) #total half moves in game
-                winner = outcome(game)
+                    ply = 0  #total half moves (up to current point)
+                    totalPlies = sum(1 for _ in game.mainline_moves()) #total half moves in game
+                    winner = outcome(game)
                 
-                board = game.board()
-                for move in game.mainline_moves():
-                    board.push(move)
-                    ply += 1
-                    vector = toVector(board)
+                    board = game.board()
+                    for move in game.mainline_moves():
+                        board.push(move)
+                        ply += 1
+                        vector = toVector(board)
                     
-                    summary = dict([("Game No", gameNumber), ("Position No", ply), ("Total Positions", totalPlies), ("Board Vector", vector), ("Winner", winner)])
-                    #records Game number (so we can keep track of which board is from which game),
-                    # position, total positions, the board position vector, and the winner
-                    data.append(summary)
+                        summary = dict([("Game No", gameNumber), ("Position No", ply), ("Total Positions", totalPlies), ("Board Vector", vector), ("Winner", winner)])
+                        #records Game number (so we can keep track of which board is from which game),
+                        # position, total positions, the board position vector, and the winner
+                        data.append(summary)
+                        
+                    print ("Game ", gameNumber)
                     
                     
     
@@ -93,6 +98,9 @@ def DataToDataset(directory): #make sure to put an r before listing the director
 
 
 
-chessData = DataToDataset(r"Placeholder Directory Here")
+chessData = DataToDataset(r"C:\Users\akbas\Desktop\MATH 495\Chess Analysis\Chess Games")
 
-chessData.to_csv('/path/to/your/directory/your_file_name.csv', index=False)
+chessData.to_csv(r'C:\Users\akbas\Desktop\MATH 495\Chess Analysis\ChessData.csv', index=False)
+                    
+                    
+
