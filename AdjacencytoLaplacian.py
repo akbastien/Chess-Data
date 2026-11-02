@@ -9,32 +9,32 @@ from collections import deque
 
 board = chess.Board("r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4")
 
-def make_vector(board): 
+def make_vector(board):
     searchVector = ["K", "Q", "R", "R", "B", "B", "N", "N", "P", "P", "P", "P", "P", "P", "P", "P", 
                     "k", "q", "r", "r", "b", "b", "n", "n", "p", "p", "p", "p", "p", "p", "p", "p"]
-    boardVector = []  
+    boardVector = []
     grid = []
     
-    for row in board.board_fen().split("/"):
-        cells = []
-        for ch in row:
-            if ch.isdigit():
-                cells.extend(["x"] * int(ch))
-            else:
-                cells.append(ch)
-        grid.append(cells)
-
+for row in board.board_fen().split("/"):
+    cells = []
+    for ch in row:
+        if ch.isdigit():
+            cells.extend(["x"] * int(ch))
+        else:
+            cells.append(ch)
+            grid.append(cells)
+            
     for piece in searchVector:
-        pos = [8, 8]                      
+        pos = [8, 8]
         for i, row in enumerate(grid):
             if piece in row:
                 j = row.index(piece)
-                grid[i][j] = "x"          
-                pos = [j, 7-i]          
+                grid[i][j] = "x"
+                pos = [j, 7-i]
                 break
         boardVector.append(pos)
-
-    return boardVector
+        
+return boardVector
 
 # KNIGHT PATHFINDING
 def minStepToReachTarget(knightPos, targetPos, n):
@@ -47,18 +47,19 @@ def minStepToReachTarget(knightPos, targetPos, n):
     visited = [[False] * n for _ in range(n)]
     q.append((x, y, 0))
     visited[x][y] = True
-
-    while q:
-        x, y, steps = q.popleft()
-        if x == tx and y == ty:
-            return steps
+    
+while q:
+    x, y, steps = q.popleft()
+    if x == tx and y == ty:
+        return steps
         for i in range(8):
             nx = x + dx[i]
             ny = y + dy[i]
             if (nx >= 0 and nx < n and ny >= 0 and ny < n and not visited[nx][ny]):
                 visited[nx][ny] = True
                 q.append((nx, ny, steps + 1))
-    return -1
+            
+return -1
 
 #DISTANCE MATRIX GENERATION
 def VtoD(piecePosition):
@@ -67,114 +68,114 @@ def VtoD(piecePosition):
     i = 0
     k = 0
     rel = 0
-  
-    while i < 32:
-        pieceRow = []
-        while k < 32:
-            if piecePosition[k] == [8,8] or piecePosition[i] == [8,8]:
-                pieceRow.append(0)
-            elif k == i:
-                pieceRow.append(0)
-            elif k != i:
-                # Kings
-                if i in [0, 16]:
-                    rel = max(abs((piecePosition[i][0] - piecePosition[k][0])),abs((piecePosition[i][1] - piecePosition[k][1])))
+    
+while i < 32:
+    pieceRow = []
+    while k < 32:
+        if piecePosition[k] == [8,8] or piecePosition[i] == [8,8]:
+            pieceRow.append(0)
+        elif k == i:
+            pieceRow.append(0)
+        elif k != i:
+            # Kings
+            if i in [0, 16]:
+                rel = max(abs((piecePosition[i][0] - piecePosition[k][0])),abs((piecePosition[i][1] - piecePosition[k][1])))
+                pieceRow.append(rel)
+                rel = 0
+            # Queens
+            if i in [1, 17]:
+                if piecePosition[i][0] == piecePosition[k][0] or piecePosition[i][1] == piecePosition[k][1]:
+                    rel = 1
+                elif abs(piecePosition[i][0] - piecePosition[k][0]) == abs(piecePosition[i][1] - piecePosition[k][1]):
+                    rel = 1
+                else:
+                    rel = 2
                     pieceRow.append(rel)
                     rel = 0
-                # Queens
-                if i in [1, 17]:
-                    if piecePosition[i][0] == piecePosition[k][0] or piecePosition[i][1] == piecePosition[k][1]:
-                        rel = 1
-                    elif abs(piecePosition[i][0] - piecePosition[k][0]) == abs(piecePosition[i][1] - piecePosition[k][1]):
-                        rel = 1
-                    else:
-                        rel = 2
+            # Rooks
+            if i in [2, 3, 18, 19]:
+                if piecePosition[i][0] == piecePosition[k][0] or piecePosition[i][1] == piecePosition[k][1]:
+                    rel = 1
+                else:
+                    rel = 2
                     pieceRow.append(rel)
                     rel = 0
-                # Rooks
-                if i in [2, 3, 18, 19]:
-                    if piecePosition[i][0] == piecePosition[k][0] or piecePosition[i][1] == piecePosition[k][1]:
-                        rel = 1
-                    else:
-                        rel = 2
+            # Bishops
+            if i in [4, 5, 20, 21]:
+                if (math.remainder(piecePosition[i][0]+piecePosition[i][1],2)) != (math.remainder(piecePosition[k][0]+piecePosition[k][1],2)):
+                    rel = 0
+                elif abs(piecePosition[i][0] - piecePosition[k][0]) == abs(piecePosition[i][1] - piecePosition[k][1]):
+                    rel = 1
+                else:
+                    rel = 2
                     pieceRow.append(rel)
                     rel = 0
-                # Bishops
-                if i in [4, 5, 20, 21]:
-                    if (math.remainder(piecePosition[i][0]+piecePosition[i][1],2)) != (math.remainder(piecePosition[k][0]+piecePosition[k][1],2)):
-                        rel = 0
-                    elif abs(piecePosition[i][0] - piecePosition[k][0]) == abs(piecePosition[i][1] - piecePosition[k][1]):
-                        rel = 1
-                    else:
-                        rel = 2
-                    pieceRow.append(rel)
+            # Knights
+            if i in [6, 7, 22, 23]:
+                n = 8
+                knightPos = (piecePosition[i][0], piecePosition[i][1])
+                targetPos = (piecePosition[k][0], piecePosition[k][1])
+                pieceRow.append(minStepToReachTarget(knightPos, targetPos, n))
+            # Pawns
+            if i in [8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26, 27, 28, 29, 30, 31]:
+                if i in [8, 9, 10, 11, 12, 13, 14, 15] and (piecePosition[i][1] <= piecePosition[k][1]):
                     rel = 0
-                # Knights
-                if i in [6, 7, 22, 23]:
-                    n = 8
-                    knightPos = (piecePosition[i][0], piecePosition[i][1])
-                    targetPos = (piecePosition[k][0], piecePosition[k][1])
-                    pieceRow.append(minStepToReachTarget(knightPos, targetPos, n))
-                # Pawns
-                if i in [8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26, 27, 28, 29, 30, 31]:
-                    if i in [8, 9, 10, 11, 12, 13, 14, 15] and (piecePosition[i][1] <= piecePosition[k][1]):
-                        rel = 0
-                    elif i in [24, 25, 26, 27, 28, 29, 30, 31] and (piecePosition[i][1] >= piecePosition[k][1]):
-                        rel = 0
+                elif i in [24, 25, 26, 27, 28, 29, 30, 31] and (piecePosition[i][1] >= piecePosition[k][1]):
+                    rel = 0
                     if (piecePosition[i][0]-1) == piecePosition[k][0] or (piecePosition[i][0]+1) == piecePosition[k][0]:
                         rel = abs(piecePosition[i][1] - piecePosition[k][1])
                     else:
                         rel = 0
-                    pieceRow.append(rel)
-                    rel = 0
-
-            k = k + 1
+                        pieceRow.append(rel)
+                        rel = 0
+                        
+      k = k + 1
   
-        i += 1
-        k = 0
-        piecePosition2.append(pieceRow)
+    i += 1
+    k = 0
+    piecePosition2.append(pieceRow)
 
-    return piecePosition2
+return piecePosition2
 
 # ADJACENCY MATRIX GENERATION
-def VtoAdjacency(piecePosition):
+def VtoA(piecePosition):
     distance_matrix = VtoD(piecePosition)
     adjacency_matrix = []
-    
-    for row in distance_matrix:
-        new_row = [1 if val == 1 else 0 for val in row]
-        adjacency_matrix.append(new_row)
+
+for row in distance_matrix:
+    new_row = [1 if val == 1 else 0 for val in row]
+    adjacency_matrix.append(new_row)
         
-    return adjacency_matrix
+return adjacency_matrix
 
 #LAPLACIAN MATRIX GENERATION
-def AdjacencyToLaplacian(adjacency_matrix):
+def AtoL(adjacency_matrix):
     
-    #This converts an Adjacency Matrix into a Laplacian Matrix using L = D - A.
-    size = len(adjacency_matrix)
+#This converts an Adjacency Matrix into a Laplacian Matrix using L = D - A.
+size = len(adjacency_matrix)
     
-    # Initialize Degree Matrix (D) with 0s
-    degree_matrix = [[0 for _ in range(size)] for _ in range(size)]
+# Initialize Degree Matrix (D) with 0s
+degree_matrix = [[0 for _ in range(size)] for _ in range(size)]
     
-    # Calculate the degree (row sum) for each node and place it on the diagonal
-    for i in range(size):
-        degree = sum(adjacency_matrix[i])
-        degree_matrix[i][i] = degree
+# Calculate the degree (row sum) for each node and place it on the diagonal
+for i in range(size):
+    degree = sum(adjacency_matrix[i])
+    degree_matrix[i][i] = degree
         
-    # Initialize Laplacian Matrix (L)
-    laplacian_matrix = [[0 for _ in range(size)] for _ in range(size)]
+# Initialize Laplacian Matrix (L)
+laplacian_matrix = [[0 for _ in range(size)] for _ in range(size)]
     
-    # Calculate L = D - A
-    for i in range(size):
-        for j in range(size):
-            laplacian_matrix[i][j] = degree_matrix[i][j] - adjacency_matrix[i][j]
+# Calculate L = D - A
+for i in range(size):
+    for j in range(size):
+        laplacian_matrix[i][j] = degree_matrix[i][j] - adjacency_matrix[i][j]
             
-    return laplacian_matrix
+return laplacian_matrix
 
 if __name__ == "__main__":
     board_vec = make_vector(board)
-    adj_matrix = VtoAdjacency(board_vec)
-    lap_matrix = AdjacencyToLaplacian(adj_matrix)
+    adj_matrix = VtoA(board_vec)
+    lap_matrix = AtoL(adj_matrix)
     print("Laplacian Matrix")
     print("Diagonal values are the degrees. Off-diagonal -1s represent adjacencies.")
     for i in range(8):
