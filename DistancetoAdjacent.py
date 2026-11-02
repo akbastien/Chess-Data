@@ -127,8 +127,7 @@ while i < 32:
             rel = 0
          pieceRow.append(rel)
          rel = 0
-        
-   k = k + 1
+        k = k + 1
   
 i += 1
 k = 0
