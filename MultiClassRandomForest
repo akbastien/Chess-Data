@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Nov 11 11:51:38 2026
+
+@author: avger
+"""
+
+#Importing Libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+eig_data = pd.read_csv(r"C:\Users\avger\OneDrive\Documents\School Documents\Math Modeling\AdjacencyData.csv")
+X = eig_data[['NumPieces', 'AdjacencyEigs_zeros', 'AdjacencyEigs_minNonzero', 'AdjacencyEigs_max', 
+              'AdjacencyEigsWW_zeros','AdjacencyEigsWW_minNonzero','AdjacencyEigsWW_max', 
+              'AdjacencyEigsWB_zeros', 'AdjacencyEigsWB_minNonzero', 'AdjacencyEigsWB_max', 
+              'AdjacencyEigsBB_zeros', 'AdjacencyEigsBB_minNonzero', 'AdjacencyEigsBB_max',
+              'AdjacencyEigsBW_zeros', 'AdjacencyEigsBW_minNonzero', 'AdjacencyEigsBW_max']]
+y = eig_data['Winner']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=0)
+
+dtree = DecisionTreeClassifier(max_depth=500, random_state=0)
+dtree.fit(X_train, y_train)
+dtree_preds = dtree.predict(X_test)
+dtree_acc = accuracy_score(y_test, dtree_preds)
+dtree_cm = confusion_matrix(y_test, dtree_preds)
+
+print("Decision Tree Accuracy:", dtree_acc)
+
+plt.figure(figsize=(4, 3))
+sns.heatmap(dtree_cm, annot=True, cmap="Blues", fmt="d")
+plt.title("Decision Tree Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()
+
+
+sample = X_test.iloc[0:1]
+prediction = dtree.predict(sample)
+
+sample_dict = sample.iloc[0].to_dict()
+print(f"\nSample Board Data: {sample_dict}")
+
+if prediction[0] == 1:
+    w = 'White'
+elif prediction[0] == .5:
+    w = 'Draw'
+else:
+    w = 'Black'
+
+print(f"Predicted Survival: {w}")
