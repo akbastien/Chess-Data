@@ -11,22 +11,30 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.inspection import permutation_importance
+from sklearn.model_selection import GroupShuffleSplit
 import warnings
 warnings.filterwarnings('ignore')
 
 
+pd.set_option('display.max_rows', None)
 
 
 df = pd.read_csv(r"C:\Users\akbas\Desktop\MATH 495\Chess Analysis\Dataframes\LaplacianData.csv")
 
+df = df[df['Winner'] != 0].reset_index(drop=True)
 
 
 X = df.drop(columns=['Game No', 'Total Positions', 'Board Vector', 'Winner'])
 y= df['Winner']
+groups = df['Game No']
 feature_names = X.columns
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+gss = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+train_idx, test_idx = next(gss.split(X, y, groups=groups))
+
+X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 
 
 clf = RandomForestClassifier(n_estimators=100, random_state=42)
