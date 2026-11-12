@@ -35,7 +35,7 @@ rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_classifier.fit(X, y)
 
 y_pred = rf_classifier.predict(X_test)
-y_pred_prob = eig_data.predict_proba(X_test)[:, 1]
+#y_pred_prob = eig_data.predict_proba(X_test)[:, 1]
 
 #To measure accuracy
 y_pred = rf_classifier.predict(X_test)
@@ -45,10 +45,10 @@ classification_rep = classification_report(y_test, y_pred)
 
 # Compute the false positive rate (FPR) 
 # and true positive rate (TPR) for different classification thresholds
-fpr, tpr, thresholds = roc_curve(y_test, y_pred_prob, pos_label=1)
+fpr, tpr, thresholds = roc_curve(y_test, y_pred, pos_label=1)
 
 # Compute the ROC AUC score
-roc_auc = roc_auc_score(y_test, y_pred_prob)
+roc_auc = roc_auc_score(y_test, y_pred)
 print(roc_auc)
 
 print(f"Accuracy: {accuracy:.2f}")
