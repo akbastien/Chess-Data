@@ -21,7 +21,7 @@ pd.set_option('display.max_rows', None)
 
 df = pd.read_csv(r"C:\Users\akbas\Desktop\MATH 495\Chess Analysis\Dataframes\LaplacianData.csv")
 
-df = df[df['Winner'] != 0].reset_index(drop=True)
+df = df[df['Winner'] != 0].reset_index(drop=True) #Gets rid of ties. Delete this line to keep ties.
 
 
 X = df.drop(columns=['Game No', 'Total Positions', 'Board Vector', 'Winner'])
