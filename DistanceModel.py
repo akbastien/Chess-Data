@@ -116,9 +116,9 @@ def gap_over_baseline(pred, n_resamples=2000):
     low, high = np.percentile((model - base) / positions, [2.5, 97.5])
     return accuracy_score(y_test, pred) - baseline, low, high
 
-print("\n" + "=" * 78)
-print("RESULTS ON THE TEST GAMES")
-print("=" * 78)
+print()
+print("Result of the Games")
+print()
 print(f"Baseline ({baseline_name}): {baseline:.4f}")
 print("AUC: 0.5 = the probabilities carry no information, 1.0 = perfect.\n")
 
@@ -162,9 +162,9 @@ for stage_name in stage.cat.categories:
 print("By stage of the game:")
 print(pd.DataFrame(rows).round(4).to_string(index=False))
 
-print("\n" + "=" * 78)
-print("RANDOM FOREST - FEATURE IMPORTANCE")
-print("=" * 78)
+print()
+print("Random Forest")
+print()
 
 feature_imp_df = pd.DataFrame({'Feature': X.columns, 'Gini Importance': forest.feature_importances_}).sort_values(
     'Gini Importance', ascending=False)
@@ -202,9 +202,9 @@ equation_df = pd.DataFrame({'lambda_i': eig_cols,
                             'Standardised coefficient': lr.coef_[coef_idx]})
 equation_df = equation_df.reindex(equation_df['Standardised coefficient'].abs().sort_values(ascending=False).index)
 
-print("\n" + "=" * 78)
-print("LOGISTIC REGRESSION - EXPLICIT EQUATION")
-print("=" * 78)
+print()
+print("Logistic Regression")
+print()
 print("P(White wins) = 1 / (1 + exp(-(a0 + n * sum(a_i * lambda_i))))")
 print(f"a0 = {a0:.6f}")
 print(equation_df.head(TOP_N).to_string(index=False))
