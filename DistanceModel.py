@@ -21,7 +21,7 @@ N_TREES = 100
 MIN_SAMPLES_LEAF = 1
 RUN_PERMUTATION_IMPORTANCE = True
 TOP_N = 25
-DROP_TIES = False #(true = without ties and false = with ties)
+DROP_TIES = True #(true = without ties and false = with ties)
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.width', 200)
