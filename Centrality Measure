@@ -191,8 +191,13 @@ def eig_features (vec):
 
 #centrality = np.eigenvector_centrality_numpy(G)
 
-df = df.join(nx.eigenvector_centrality_numpy(df["Board Vector"].apply(eig_features)))
+#Section done with AI help
+graphs = df["Board Vector"].apply(eig_features)
 
+centrality_dicts = graphs.apply(nx.eigenvector_centrality_numpy)
+
+centrality_df = pd.DataFrame(centrality_dicts.tolist(), index=df.index)
+df = df.join(centrality_df)
 
 #print([f"{node} {centrality[node]:0.2f}" for node in centrality])
 
