@@ -1,0 +1,207 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Nov 14 15:19:30 2026
+
+@author: avger
+"""
+
+import pandas as pd
+from collections import deque
+import numpy as np
+import ast
+import networkx as nx
+
+#creates an ordered list of magnitudes of eigenvalues
+def getEigenvalues(matrix):
+    values1 = np.linalg.eigvals(matrix)
+    values = []
+    for num in values1:
+        num1 = abs(num)
+        values.append(num1)
+    values.sort()
+    
+    return values
+
+
+def minStepToReachTarget(knightPos, targetPos, n):
+
+    # Convert 1-based indexing to 0-based indexing
+    x = knightPos[0] - 1
+    y = knightPos[1] - 1
+    tx = targetPos[0] - 1
+    ty = targetPos[1] - 1
+
+    # All 8 possible Knight moves
+    dx = [2, 2, -2, -2, 1, 1, -1, -1]
+    dy = [1, -1, 1, -1, 2, -2, 2, -2]
+
+    # Queue stores position and number of steps
+    q = deque()
+
+    # Mark visited cells
+    visited = [[False] * n for _ in range(n)]
+
+    # Start BFS from the initial position
+    q.append((x, y, 0))
+    visited[x][y] = True
+
+    while q:
+        x, y, steps = q.popleft()
+
+        # If target is reached
+        if x == tx and y == ty:
+            return steps
+
+        # Try all 8 possible Knight moves
+        for i in range(8):
+            nx = x + dx[i]
+            ny = y + dy[i]
+
+            # Check if the new position is valid and unvisited
+            if (nx >= 0 and nx < n and ny >= 0 and ny < n
+                    and not visited[nx][ny]):
+
+                visited[nx][ny] = True
+
+                # Add the new position with updated steps
+                q.append((nx, ny, steps + 1))
+
+    return -1
+
+def VtoD(piecePosition):
+#Code for Knight distance edited from Utkarsh Trivedi
+  piecePosition2 = []
+  pieceRow = []
+  i = 0
+  k = 0
+  rel = 0
+  
+  while i < 32:
+    pieceRow = []
+    while k < 32:
+      if piecePosition[k] == [8,8] or piecePosition[i] == [8,8]:
+        pieceRow.append(0)
+      elif k == i:
+        pieceRow.append(0)
+      elif k != i:
+        #Kings
+        if i in [0, 16]:
+          rel = max(abs((piecePosition[i][0] - piecePosition[k][0])),abs((piecePosition[i][1] - piecePosition[k][1])))
+          pieceRow.append(rel)
+          rel = 0
+        #Queens
+        if i in [1, 17]:
+          if piecePosition[i][0] == piecePosition[k][0] or piecePosition[i][1] == piecePosition[k][1]:
+            rel = 1
+          elif abs(piecePosition[i][0] - piecePosition[k][0]) == abs(piecePosition[i][1] - piecePosition[k][1]):
+            rel = 1
+          else:
+            rel = 2
+          pieceRow.append(rel)
+          rel = 0
+        #Rooks
+        if i in [2, 3, 18, 19]:
+          if piecePosition[i][0] == piecePosition[k][0] or piecePosition[i][1] == piecePosition[k][1]:
+            rel = 1
+          else:
+            rel = 2
+          pieceRow.append(rel)
+          rel = 0
+        #Bishops
+        if i in [4, 5, 20, 21]:
+          if ((piecePosition[i][0]+piecePosition[i][1])%2 != (piecePosition[k][0]+piecePosition[k][1])%2):
+            rel = 0
+          elif abs(piecePosition[i][0] - piecePosition[k][0]) == abs(piecePosition[i][1] - piecePosition[k][1]):
+            rel = 1
+          else:
+            rel = 2
+          pieceRow.append(rel)
+          rel = 0
+        #Knight1
+        if i in [6, 7, 22, 23]:
+          n = 8
+          knightPos = (piecePosition[i][0] + 1, piecePosition[i][1] + 1)
+          targetPos = (piecePosition[k][0] + 1, piecePosition[k][1] + 1)
+          pieceRow.append(minStepToReachTarget(knightPos, targetPos, n))
+        #White Pawns
+        if i in [8, 9, 10, 11, 12, 13, 14, 15]:
+          if (piecePosition[i][1] > piecePosition[k][1])  :
+              rel = 0
+          elif (piecePosition[i][0]-1) == piecePosition[k][0] or (piecePosition[i][0]+1) == piecePosition[k][0]:
+            rel = abs(piecePosition[i][1] - piecePosition[k][1])
+          else:
+            rel = 0
+          pieceRow.append(rel)
+          rel = 0
+        #Black Pawns
+        if i in [24, 25, 26, 27, 28, 29, 30, 31]:
+            if (piecePosition[i][1] < piecePosition[k][1])  :
+                rel = 0
+            elif (piecePosition[i][0]-1) == piecePosition[k][0] or (piecePosition[i][0]+1) == piecePosition[k][0]:
+              rel = abs(piecePosition[i][1] - piecePosition[k][1])
+            else:
+              rel = 0
+            pieceRow.append(rel)
+            rel = 0
+            
+            
+      k = k + 1
+  
+    i += 1
+    k= 0
+    piecePosition2.append(pieceRow)
+
+  return piecePosition2
+
+
+# ADJACENCY MATRIX GENERATION
+def DistancetoAdjacency(distance_matrix):
+    adjacency_matrix = []
+    
+    for row in distance_matrix:
+        new_row = [1 if val == 1 else 0 for val in row]
+        adjacency_matrix.append(new_row)
+        
+    return adjacency_matrix
+
+df = pd.read_csv(r"C:\Users\avger\OneDrive\Documents\School Documents\Math Modeling\ChessData.csv")
+
+df["Board Vector"] = df["Board Vector"].apply(ast.literal_eval)
+
+def eig_features (vec):
+    i=0
+    j=0
+    D = np.array(VtoD(vec))
+    A = np.array(DistancetoAdjacency(D))
+    G = nx.DiGraph()
+    G.add_nodes_from([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31])
+    while i < 31:
+        while j < 31:
+            if A[i,j]!=0:
+                G.add_edge(i,j)
+                
+            j = j + 1
+            
+        i = i + 1
+        j = 0
+    
+        return G
+
+#G = df["Board Vector"].apply(eig_features)
+
+#centrality = np.eigenvector_centrality_numpy(G)
+
+df = df.join(nx.eigenvector_centrality_numpy(df["Board Vector"].apply(eig_features)))
+
+
+#print([f"{node} {centrality[node]:0.2f}" for node in centrality])
+
+#eigen_centrality(
+#  adjacency_matrix,
+#  directed = FALSE,
+#  scale = deprecated(),
+#  weights = NULL,
+#  options = arpack_defaults()
+#)
+
+df.to_csv(r'C:\Users\avger\OneDrive\Documents\School Documents\Math Modeling\Centrality.csv', index=False)
