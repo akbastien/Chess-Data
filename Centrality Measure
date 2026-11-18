@@ -11,16 +11,6 @@ import numpy as np
 import ast
 import networkx as nx
 
-#creates an ordered list of magnitudes of eigenvalues
-def getEigenvalues(matrix):
-    values1 = np.linalg.eigvals(matrix)
-    values = []
-    for num in values1:
-        num1 = abs(num)
-        values.append(num1)
-    values.sort()
-    
-    return values
 
 
 def minStepToReachTarget(knightPos, targetPos, n):
@@ -164,7 +154,7 @@ def DistancetoAdjacency(distance_matrix):
         
     return adjacency_matrix
 
-df = pd.read_csv(r"C:\Users\avger\OneDrive\Documents\School Documents\Math Modeling\ChessData.csv")
+df = pd.read_csv(r"C:\Users\akbas\Desktop\MATH 495\Chess Analysis\Dataframes\ChessData.csv")
 
 df["Board Vector"] = df["Board Vector"].apply(ast.literal_eval)
 
@@ -175,8 +165,8 @@ def eig_features (vec):
     A = np.array(DistancetoAdjacency(D))
     G = nx.DiGraph()
     G.add_nodes_from([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31])
-    while i < 31:
-        while j < 31:
+    while i < 32:
+        while j < 32:
             if A[i,j]!=0:
                 G.add_edge(i,j)
                 
@@ -185,28 +175,17 @@ def eig_features (vec):
         i = i + 1
         j = 0
     
-        return G
+    return G
 
-#G = df["Board Vector"].apply(eig_features)
-
-#centrality = np.eigenvector_centrality_numpy(G)
 
 #Section done with AI help
 graphs = df["Board Vector"].apply(eig_features)
 
-centrality_dicts = graphs.apply(nx.eigenvector_centrality_numpy)
+
+centrality_dicts = graphs.apply(nx.degree_centrality)
 
 centrality_df = pd.DataFrame(centrality_dicts.tolist(), index=df.index)
 df = df.join(centrality_df)
 
-#print([f"{node} {centrality[node]:0.2f}" for node in centrality])
 
-#eigen_centrality(
-#  adjacency_matrix,
-#  directed = FALSE,
-#  scale = deprecated(),
-#  weights = NULL,
-#  options = arpack_defaults()
-#)
-
-df.to_csv(r'C:\Users\avger\OneDrive\Documents\School Documents\Math Modeling\Centrality.csv', index=False)
+df.to_csv(r"C:\Users\akbas\Desktop\MATH 495\Chess Analysis\Dataframes\CentralityData.csv", index=False)
